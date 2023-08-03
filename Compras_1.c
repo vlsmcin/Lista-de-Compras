@@ -26,10 +26,11 @@ void remover (char *n,int q,produto *lista,int *tam) {
                 lista[(*tam)-1] = lista[i];
                 lista[i] = troca;
                 (*tam)--;
+                i-=1;
             }
     }
 }
-void removergrupo (int valor,produto *lista, int *tam) {
+void removergrupo (float valor,produto *lista, int *tam) {
     produto troca;
     for (int i=0;i<(*tam);i++){
         if (lista[i].preco > valor){
@@ -37,6 +38,7 @@ void removergrupo (int valor,produto *lista, int *tam) {
             lista[(*tam)-1] = lista[i];
             lista[i] = troca;
             (*tam)--;
+            i -= 1;
         }
     }
 }
@@ -45,7 +47,7 @@ void consultar (produto *lista,int tam) {
     for (int i=0;i<tam;i++){
         soma += lista[i].preco*lista[i].quantidade;
     }
-    printf("Atualmente a lista esta em R$%.1f\n",soma);
+    printf("\nAtualmente a lista esta em R$%.1f\n",soma);
 }
 void procurar (char *n,produto *lista,int tam) {
     int achou = 0;
@@ -53,12 +55,12 @@ void procurar (char *n,produto *lista,int tam) {
         if (strcmp(n,lista[i].nome)==0){
             achou = 1;
             printf("%s\n",lista[i].nome);
-            printf("-%.1f\n",lista[i].preco);
-            printf("-%d\n",lista[i].quantidade);
+            printf("- %.1f\n",lista[i].preco);
+            printf("- %d\n",lista[i].quantidade);
         }
     }
     if (achou == 0)
-        printf("%s nao foi encontrado.\n",n);
+        printf("\n%s nao foi encontrado.\n",n);
 }
 
 int main() {
@@ -82,7 +84,7 @@ int main() {
             scanf("%d",&removido);
             removergrupo(removido,produtos,&tam);
         }
-        else if (strcmp(instrucao,"PROCURAR")){
+        else if (strcmp(instrucao,"PROCURAR")==0){
             scanf(" %s",nome);
             procurar(nome,produtos,tam);
         }
