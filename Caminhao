@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char Placa[6];
+} Caminhao;
+
+typedef struct {
+    int codigo;
+    float loc_x,loc_y;
+    Caminhao *caminhao;
+    int n_caminhao;
+} Filial;
+
+typedef struct {
+    float origem_x,origem_y;
+    float destino_x,destino_y;
+} Produto;
+
+void remover_caminhao(Filial*filiais,int codigo_filial) {
+    int i = 0;
+    while (filiais) {
+        if (filiais[i].codigo == codigo_filial){
+            filiais[i].n_caminhao -= 1;
+            filiais[i].caminhao = (Caminhao *) realloc(filiais[i].caminhao,filiais[i].n_caminhao*sizeof(Caminhao));
+        }
+        i++;
+    }
+}
+
+Filial *cadastrar_filial(Filial *filiais,int *nfiliais) {
+    filiais
+}
