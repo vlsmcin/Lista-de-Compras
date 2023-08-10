@@ -22,26 +22,30 @@ typedef struct {
 Caminhao remover_caminhao(Filial*filiais,int codigo_filial) {
     Caminhao caminhao_retornado = filiais[codigo_filial].caminhao[filiais[codigo_filial].n_caminhao];
     filiais[codigo_filial].n_caminhao -= 1;
-    filiais[codigo_filial].caminhao = (Caminhao *) realloc(filiais[codigo_filial].caminhao,filiais[codigo_filial].n_caminhao*sizeof(Caminhao));
+    if (filiais[codigo_filial].n_caminhao == 0)
+        filiais[codigo_filial].caminhao = NULL;
+    else  
+        filiais[codigo_filial].caminhao = (Caminhao *) realloc(filiais[codigo_filial].caminhao,filiais[codigo_filial].n_caminhao*sizeof(Caminhao));
     return caminhao_retornado;
 }
 
 Filial *cadastrar_filial(Filial *filiais,int *nfiliais) {
-    *nfiliais ++;
-    filiais = (Filial *) realloc(filiais,*nfiliais*sizeof(Filial));
+    *nfiliais += 1;
+    filiais = (Filial *) realloc(filiais,(*nfiliais)*sizeof(Filial));
+    filiais[*nfiliais-1].codigo = *nfiliais - 1;
     printf("Digite a localização em x:");
-    scanf("%f",&filiais[*nfiliais].loc_x);
+    scanf("%f",&filiais[*nfiliais-1].loc_x);
     printf("Digite a localização em y:");
-    scanf("%f",&filiais[*nfiliais].loc_y);
+    scanf("%f",&filiais[*nfiliais-1].loc_y);
+    filiais[*nfiliais-1].n_caminhao = 0;
+    filiais[*nfiliais-1].caminhao = NULL;
     return filiais;
 }
 
 void cadastrar_caminhao(Filial *filiais, Caminhao caminhao, int codigo_filial) {
-    filiais[codigo_filial].n_caminhao ++;
+    filiais[codigo_filial].n_caminhao += 1;
     filiais[codigo_filial].caminhao = (Caminhao *)realloc (filiais[codigo_filial].caminhao,filiais[codigo_filial].n_caminhao * sizeof(Caminhao));
-    printf("Qual a placa do caminhao cadastrado?");
-    scanf(" %s",caminhao.Placa);
-    filiais[codigo_filial].caminhao[filiais[codigo_filial].n_caminhao] = caminhao;
+    filiais[codigo_filial].caminhao[filiais[codigo_filial].n_caminhao-1] = caminhao;
 }
 
 void realizar_entrega(Filial *filiais, Produto produto, int n_filiais) {
@@ -52,7 +56,7 @@ void realizar_entrega(Filial *filiais, Produto produto, int n_filiais) {
     printf("Qual o destino do produto (x,y)?");
     scanf("%f %f",&produto.destino_x,&produto.destino_y);
     // Calculando a distancia das origens
-    for (int i=0;i<n_filiais;i++){sqrt(pow(filiais[i].loc_x - produto.destino_x,2) + pow(filiais[i].loc_y - produto.destino_y,2));
+    for (int i=0;i<n_filiais;i++){
         if (i==0){
             distancia_menor = sqrt(pow(filiais[i].loc_x - produto.origem_x,2) + pow(filiais[i].loc_y - produto.origem_y,2));
             o_escolhido = i;
@@ -78,17 +82,17 @@ void realizar_entrega(Filial *filiais, Produto produto, int n_filiais) {
 
  void imprimir_filiais(Filial *filiais, int n_filiais) {
     for (int i=0;i<n_filiais;i++) {
-        printf("Filial %d",filiais[i].codigo);
+        printf("Filial %d\n",filiais[i].codigo+1);
         for (int j=0;j<filiais[i].n_caminhao;j++){
-            printf("\tPlaca %d: %s",j+1,filiais[i].caminhao[j].Placa);
+            printf("\tPlaca %d: %s\n",j+1,filiais[i].caminhao[j].Placa);
         }
         printf("\n");
     }
  }
 int main() {
-    int opcao,n_filiais,codigo;
-    Filial *filiais;
-    Caminhao novo;
+    int opcao,n_filiais=0,aux;
+    Filial *filiais = NULL;
+    Caminhao caminhao;
     Produto produto;
     do {
         printf("\n ==================MENU==================\n");
@@ -97,14 +101,14 @@ int main() {
         scanf("%d",&opcao);
         switch (opcao) {
             case 1:
-                cadastrar_filial(filiais,&n_filiais);
+                filiais = cadastrar_filial(filiais,&n_filiais);
                 break;
             case 2:
-                printf("Digite a placa do seu caminhão: ");
-                scanf(" %s",novo.Placa);
                 printf("Digite o codigo da filial: ");
-                scanf("%d",&codigo);
-                cadastrar_caminhao(filiais,novo,codigo);
+                scanf("%d",&aux);
+                printf("Qual a placa do caminhao cadastrado?");
+                scanf(" %s",caminhao.Placa);
+                cadastrar_caminhao(filiais,caminhao,aux);
                 break;
             case 3:
                 realizar_entrega(filiais,produto,n_filiais);
