@@ -20,7 +20,7 @@ typedef struct {
 } Produto;
 
 Caminhao remover_caminhao(Filial*filiais,int codigo_filial) {
-    Caminhao caminhao_retornado = filiais[codigo_filial].caminhao[filiais[codigo_filial].n_caminhao];
+    Caminhao caminhao_retornado = filiais[codigo_filial].caminhao[filiais[codigo_filial].n_caminhao-1];
     filiais[codigo_filial].n_caminhao -= 1;
     if (filiais[codigo_filial].n_caminhao == 0)
         filiais[codigo_filial].caminhao = NULL;
@@ -43,9 +43,9 @@ Filial *cadastrar_filial(Filial *filiais,int *nfiliais) {
 }
 
 void cadastrar_caminhao(Filial *filiais, Caminhao caminhao, int codigo_filial) {
-    filiais[codigo_filial].n_caminhao += 1;
-    filiais[codigo_filial].caminhao = (Caminhao *)realloc (filiais[codigo_filial].caminhao,filiais[codigo_filial].n_caminhao * sizeof(Caminhao));
-    filiais[codigo_filial].caminhao[filiais[codigo_filial].n_caminhao-1] = caminhao;
+    filiais[codigo_filial].caminhao = (Caminhao *)realloc (filiais[codigo_filial].caminhao,(filiais[codigo_filial].n_caminhao+1) * sizeof(Caminhao));
+    filiais[codigo_filial].caminhao[filiais[codigo_filial].n_caminhao] = caminhao;
+    filiais[codigo_filial].n_caminhao++;
 }
 
 void realizar_entrega(Filial *filiais, Produto produto, int n_filiais) {
@@ -82,7 +82,7 @@ void realizar_entrega(Filial *filiais, Produto produto, int n_filiais) {
 
  void imprimir_filiais(Filial *filiais, int n_filiais) {
     for (int i=0;i<n_filiais;i++) {
-        printf("Filial %d\n",filiais[i].codigo+1);
+        printf("Filial %d\n",filiais[i].codigo);
         for (int j=0;j<filiais[i].n_caminhao;j++){
             printf("\tPlaca %d: %s\n",j+1,filiais[i].caminhao[j].Placa);
         }
@@ -90,7 +90,7 @@ void realizar_entrega(Filial *filiais, Produto produto, int n_filiais) {
     }
  }
 int main() {
-    int opcao,n_filiais=0,aux;
+    int opcao=0,n_filiais=0,codigo=0;
     Filial *filiais = NULL;
     Caminhao caminhao;
     Produto produto;
@@ -105,10 +105,10 @@ int main() {
                 break;
             case 2:
                 printf("Digite o codigo da filial: ");
-                scanf("%d",&aux);
+                scanf("%d",&codigo);
                 printf("Qual a placa do caminhao cadastrado?");
-                scanf(" %s",caminhao.Placa);
-                cadastrar_caminhao(filiais,caminhao,aux);
+                scanf(" %6[^\n]",caminhao.Placa);
+                cadastrar_caminhao(filiais,caminhao,codigo);
                 break;
             case 3:
                 realizar_entrega(filiais,produto,n_filiais);
